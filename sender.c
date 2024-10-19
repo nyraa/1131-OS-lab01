@@ -75,14 +75,18 @@ int main(int argc, char* argv[])
     while(fgets(message.message, MAX_MESSAGE_SIZE, fp) != NULL){
         message.size = strlen(message.message);
 
-        // send message
+        // wait for receiver
         sem_wait(sem_sender);
+
+        // send message
         printf("Sending message: %s", message.message);
         clock_gettime(CLOCK_MONOTONIC, &start);
         send(message, &mailbox);
         clock_gettime(CLOCK_MONOTONIC, &end);
-        sem_post(sem_receiver);
         time_taken += (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+
+        // release receiver
+        sem_post(sem_receiver);
     }
 
     // send termination message

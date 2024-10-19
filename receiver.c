@@ -67,12 +67,19 @@ int main(int argc, char* argv[])
 
     while(1)
     {
+        // wait for sender to send message
         sem_wait(sem_receiver);
+
+        // receive message
         clock_gettime(CLOCK_MONOTONIC, &start);
         receive(&message, &mailbox);
         clock_gettime(CLOCK_MONOTONIC, &end);
         time_taken += (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+
+        // release sender
         sem_post(sem_sender);
+
+        // if termination message received, break
         if(message.flag == 1)
         {
             printf("\nTermination message received\n");
