@@ -59,6 +59,7 @@ int main(int argc, char* argv[])
             perror("mmap");
             exit(1);
         }
+        close(shm_fd);
     }
 
     struct timespec start, end;
