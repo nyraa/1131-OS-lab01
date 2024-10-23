@@ -1,4 +1,7 @@
 #include "sender.h"
+#define COLOR_CYAN "\x1b[36m"
+#define COLOR_RED "\x1b[31m"
+#define COLOR_RESET "\x1b[0m"
 
 void send(message_t message, mailbox_t* mailbox_ptr)
 {
@@ -39,7 +42,7 @@ int main(int argc, char* argv[])
 
     if(mailbox.flag == MESSAGE_PASSING)
     {
-        printf("Message passing\n");
+        printf(COLOR_CYAN"Message passing\n"COLOR_RESET);
         struct mq_attr attr;
         attr.mq_maxmsg = 10;
         attr.mq_msgsize = sizeof(message_t);
@@ -52,7 +55,7 @@ int main(int argc, char* argv[])
     }
     else if(mailbox.flag == SHARED_MEMORY)
     {
-        printf("Shared memory\n");
+        printf(COLOR_CYAN"Shared memory\n"COLOR_RESET);
         int shm_fd = shm_open("/mailbox", O_RDWR | O_CREAT, 0644);
         if(shm_fd == -1)
         {
@@ -79,7 +82,7 @@ int main(int argc, char* argv[])
         sem_wait(sem_sender);
 
         // send message
-        printf("Sending message: %s", message.message);
+        printf(COLOR_CYAN"Sending message:"COLOR_RESET" %s", message.message);
         clock_gettime(CLOCK_MONOTONIC, &start);
         send(message, &mailbox);
         clock_gettime(CLOCK_MONOTONIC, &end);
@@ -96,7 +99,7 @@ int main(int argc, char* argv[])
     sem_post(sem_receiver);
     
     // print terminate message
-    printf("\nEOF reached\n");
+    printf(COLOR_RED"\nEOF reached\n"COLOR_RESET);
     printf("Total time taken in sending msg: %f\n", time_taken);
 
     // close semaphore

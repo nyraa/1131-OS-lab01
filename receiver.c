@@ -1,4 +1,7 @@
 #include "receiver.h"
+#define COLOR_CYAN "\x1b[36m"
+#define COLOR_RED "\x1b[31m"
+#define COLOR_RESET "\x1b[0m"
 
 void receive(message_t* message_ptr, mailbox_t* mailbox_ptr)
 {
@@ -36,7 +39,7 @@ int main(int argc, char* argv[])
 
     if(mailbox.flag == MESSAGE_PASSING)
     {
-        printf("Message passing\n");
+        printf(COLOR_CYAN"Message passing\n"COLOR_RESET);
         mailbox.storage.mqd = mq_open("/mailbox", O_RDONLY);
         if(mailbox.storage.mqd == (mqd_t) -1)
         {
@@ -46,7 +49,7 @@ int main(int argc, char* argv[])
     }
     else if(mailbox.flag == SHARED_MEMORY)
     {
-        printf("Shared memory\n");
+        printf(COLOR_CYAN"Shared memory\n"COLOR_RESET);
         int shm_fd = shm_open("/mailbox", O_RDWR, 0644);
         if(shm_fd == -1)
         {
@@ -82,11 +85,11 @@ int main(int argc, char* argv[])
         // if termination message received, break
         if(message.flag == 1)
         {
-            printf("\nTermination message received\n");
+            printf(COLOR_RED"\nTermination message received\n"COLOR_RESET);
             printf("Total time taken in receiving messages: %f\n", time_taken);
             break;
         }
-        printf("Message received: %s", message.message);
+        printf(COLOR_CYAN"Message received:"COLOR_RESET" %s", message.message);
     }
 
     // close mailbox
